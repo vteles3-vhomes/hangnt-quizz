@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Game</title>
+    <style>
+        .question {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .answers {
+            list-style-type: none;
+            padding: 0;
+        }
+        .answers li {
+            margin-bottom: 5px;
+        }
+        .correct {
+            background-color: lightgreen;
+        }
+        .wrong {
+            background-color: lightcoral;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .next-btn {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container"></div>
+    <div class="result" id="result"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next</button>
+
+    <script>
+        const quizData = [
+            {
+                "Câu hỏi": "1 + 1 bằng mấy?",
+                "Đáp án A": "1",
+                "Đáp án B": "2",
+                "Đáp án C": "3",
+                "Đáp án D": "4",
+                "Đáp án đúng": "B"
+            },
+            {
+                "Câu hỏi": "Thủ đô của Việt Nam là gì?",
+                "Đáp án A": "Hà Nội",
+                "Đáp án B": "Hồ Chí Minh",
+                "Đáp án C": "Đà Nẵng",
+                "Đáp án D": "Nha Trang",
+                "Đáp án đúng": "A"
+            }
+            // Thêm câu hỏi khác
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result');
+        const nextBtn = document.getElementById('next-btn');
+
+        function loadQuestion() {
+            const questionData = quizData[currentQuestionIndex];
+            const answers = ['A', 'B', 'C', 'D'];
+
+            quizContainer.innerHTML = `
+                <div class="question">${questionData["Câu hỏi"]}</div>
+                <ul class="answers">
+                    ${answers.map(answer => `<li><button class="answer-btn" onclick="checkAnswer('${answer}', this)">${questionData['Đáp án ' + answer]}</button></li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function checkAnswer(answer, button) {
+            const correctAnswer = quizData[currentQuestionIndex]["Đáp án đúng"];
+            const answerButtons = document.querySelectorAll('.answer-btn');
+            
+            // Disable all buttons
+            answerButtons.forEach(btn => btn.disabled = true);
+
+            // Highlight the correct and wrong answers
+            if (answer === correctAnswer) {
+                button.classList.add('correct');
+                resultContainer.textContent = 'Correct!';
+                score++;
+            } else {
+                button.classList.add('wrong');
+                resultContainer.textContent = 'Wrong!';
+                answerButtons.forEach(btn => {
+                    if (btn.textContent === quizData[currentQuestionIndex]['Đáp án ' + correctAnswer]) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            // Show the next button
+            nextBtn.style.display = 'inline';
+        }
+
+        function nextQuestion() {
+            // Reset result and hide next button
+            resultContainer.textContent = '';
+            nextBtn.style.display = 'none';
+
+            // Select a random question index
+            currentQuestionIndex = Math.floor(Math.random() * quizData.length);
+
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
